@@ -1,6 +1,8 @@
-a = float(input("Введите первое число: "))
-b = float(input("Введите второе число: "))
-print("Сумма =", a+b)
-print("Разница =", a-b)
-print("Произведение =", a*b)
-print(a/0)
+def add(a, b):
+    return a + b
+
+if __name__ == "__main__":
+    num1 = float(input("Введите первое число: "))
+    num2 = float(input("Введите второе число: "))
+    result = add(num1, num2)
+    print(f"Результат: {result}")
