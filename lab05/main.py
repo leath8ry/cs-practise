@@ -14,13 +14,15 @@ def main():
     with open(filename, encoding="utf-8") as f:
         errors_list = top_errors(f, 3)
         
-    total_parsed = sum(v for k, v in levels_counts.items() if k != "BROKEN")
+    total_parsed = sum(levels_counts.values())
+    
     error_count = levels_counts.get("ERROR", 0)
     broken_count = levels_counts.get("BROKEN", 0)
     
     print(total_parsed)
     print(error_count)
     print(broken_count)
+    
     
     report_text = format_report(levels_counts, errors_list)
     
