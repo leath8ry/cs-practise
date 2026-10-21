@@ -1,4 +1,4 @@
-def parse_record(line):
+def parse_record(line: str) -> dict:
     parts = line.split(";")
     if len(parts) != 3:
         raise ValueError(f"Неверное количество полей в строке: '{line}'")
@@ -16,8 +16,17 @@ def parse_record(line):
     return {"city": city.strip(), "temp": temp, "date": date.strip()}
 
 
-def read_valid(lines):
-    pass
+def read_valid(lines: list[str]) -> list[dict]: 
+    valid_records = []
+    for line in lines:
+        if not line.strip():
+            continue
+        try:
+            record = parse_record(line)
+            valid_records.append(record)
+        except ValueError:
+            continue
+    return valid_records
 
 def average_by_city(records):
     pass
