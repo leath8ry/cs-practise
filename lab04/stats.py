@@ -1,15 +1,26 @@
 def parse_record(line):
-    """Разбирает строку журнала."""
-    pass
+    parts = line.split(";")
+    if len(parts) != 3:
+        raise ValueError(f"Неверное количество полей в строке: '{line}'")
+    
+    city, temp_str, date = parts
+    
+    if not city.strip() or not date.strip():
+        raise ValueError(f"Город или дата пусты в строке: '{line}'")
+        
+    try:
+        temp = float(temp_str)
+    except ValueError:
+        raise ValueError(f"Температура не является числом: '{temp_str}' в строке: '{line}'")
+    
+    return {"city": city.strip(), "temp": temp, "date": date.strip()}
+
 
 def read_valid(lines):
-    """Фильтрует корректные строки."""
     pass
 
 def average_by_city(records):
-    """Считает среднюю температуру по городам."""
     pass
 
 def warmest_city(records):
-    """Находит самый тёплый город."""
     pass
