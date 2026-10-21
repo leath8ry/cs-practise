@@ -4,12 +4,13 @@ def parse_record(line: str) -> dict:
         raise ValueError(f"Неверное количество полей в строке: '{line}'")
     
     city, temp_str, date = parts
-    
     if not city.strip() or not date.strip():
         raise ValueError(f"Город или дата пусты в строке: '{line}'")
         
+    temp_str_clean = temp_str.strip().replace(',', '.')
+    
     try:
-        temp = float(temp_str)
+        temp = float(temp_str_clean)
     except ValueError:
         raise ValueError(f"Температура не является числом: '{temp_str}' в строке: '{line}'")
     
