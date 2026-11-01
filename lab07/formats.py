@@ -20,7 +20,7 @@ def csv_to_records(text: str) -> list[dict]:
     return records
 
 def _convert_value(val_str: str):
-    val = val_str.strip()
+    val = val_str.strip() 
     if not val:
         return None
         
@@ -40,6 +40,7 @@ def _convert_value(val_str: str):
         return float(val.replace(",", "."))
     except ValueError:
         pass
+        
     return val
 
 def parse_settings(lines: list[str]) -> dict:
@@ -47,8 +48,9 @@ def parse_settings(lines: list[str]) -> dict:
     current_list_key = None
     
     for line in lines:
-        if "#" in line:
-            line = line[:line.index("#")]
+        comment_idx = line.find("#")
+        if comment_idx != -1:
+            line = line[:comment_idx]
             
         stripped = line.strip()
         if not stripped:
@@ -64,14 +66,15 @@ def parse_settings(lines: list[str]) -> dict:
         if ":" in stripped:
             key, _, val_str = stripped.partition(":")
             key = key.strip()
-            val_str = val_str.strip()
+            val_str = val_str.strip()  
             
             if not val_str:
                 result[key] = []
                 current_list_key = key
             else:
                 result[key] = _convert_value(val_str)
-                current_list_key = None  
+                current_list_key = None
+                
     return result
 
 def merge_by_key(rows: list[dict], extra: dict, key: str = "id") -> list[dict]:
