@@ -20,7 +20,7 @@ def csv_to_records(text: str) -> list[dict]:
     return records
 
 def _convert_value(val_str: str):
-    val = val_str.strip() 
+    val = val_str.strip()
     if not val:
         return None
         
@@ -29,7 +29,7 @@ def _convert_value(val_str: str):
         return True
     if lower_val in ("false", "no"):
         return False
-        
+    
     try:
         if "." not in val and "," not in val:
             return int(val)
@@ -39,9 +39,7 @@ def _convert_value(val_str: str):
     try:
         return float(val.replace(",", "."))
     except ValueError:
-        pass
-        
-    return val
+        return val
 
 def parse_settings(lines: list[str]) -> dict:
     result = {}
