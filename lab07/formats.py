@@ -37,9 +37,12 @@ def _convert_value(val_str: str):
         pass
         
     try:
-        return float(val.replace(",", "."))
+        if "," not in val: 
+            return float(val)
     except ValueError:
-        return val
+        pass
+        
+    return val 
 
 def parse_settings(lines: list[str]) -> dict:
     result = {}
