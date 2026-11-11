@@ -2,7 +2,7 @@ import json
 
 
 def csv_to_records(text: str) -> list[dict]:
-    if not text.strip():
+    if not text or not text.strip():
         return []
     lines = text.strip().splitlines()
     headers = [h.strip() for h in lines[0].split(",")]
@@ -11,9 +11,10 @@ def csv_to_records(text: str) -> list[dict]:
         if not line.strip():
             continue
         values = [v.strip() for v in line.split(",")]
-        record = {}
-        for i, header in enumerate(headers):
-            record[header] = values[i] if i < len(values) else ""
+        record = {
+            header: (values[i] if i < len(values) else "")
+            for i, header in enumerate(headers)
+        }
         records.append(record)
     return records
 
@@ -21,7 +22,7 @@ def csv_to_records(text: str) -> list[dict]:
 def _convert_value(val_str: str):
     val = val_str.strip()
     if not val:
-        return None
+        return ""
 
     lower_val = val.lower()
     if lower_val in ("true", "yes"):
@@ -29,17 +30,18 @@ def _convert_value(val_str: str):
     if lower_val in ("false", "no"):
         return False
 
-    try:
-        if "." not in val and "," not in val:
+    if "." not in val and "," not in val:
+        try:
             return int(val)
-    except ValueError:
-        pass
+        except ValueError:
+            pass
 
-    try:
-        if "," not in val:
-            return float(val)
-    except ValueError:
-        pass
+    normalized = val.replace(",", ".")
+    if "." in normalized and lower_val not in ("inf", "-inf", "+inf", "nan"):
+        try:
+            return float(normalized)
+        except ValueError:
+            pass
 
     return val
 
@@ -57,11 +59,10 @@ def parse_settings(lines: list[str]) -> dict:
         if not stripped:
             continue
 
-        if stripped.startswith("- ") and current_list_key is not None:
-            item_val = stripped[2:].strip()
-            converted = _convert_value(item_val)
-            if converted is not None:
-                result[current_list_key].append(converted)
+        if stripped.startswith("-") and current_list_key is not None:
+            item_val = stripped[1:].strip()
+            if item_val:
+                result[current_list_key].append(_convert_value(item_val))
             continue
 
         if ":" in stripped:
@@ -82,12 +83,11 @@ def parse_settings(lines: list[str]) -> dict:
 def merge_by_key(rows: list[dict], extra: dict, key: str = "id") -> list[dict]:
     merged = []
     for row in rows:
-        new_row = dict(row)
         row_key = row.get(key)
-        if row_key in extra:
-            for k, v in extra[row_key].items():
-                if k not in new_row:
-                    new_row[k] = v
+        if row_key in extra and isinstance(extra[row_key], dict):
+            new_row = {**extra[row_key], **row}
+        else:
+            new_row = dict(row)
         merged.append(new_row)
     return merged
 
