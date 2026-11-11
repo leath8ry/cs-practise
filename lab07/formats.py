@@ -30,18 +30,21 @@ def _convert_value(val_str: str):
     if lower_val in ("false", "no"):
         return False
 
-    if "." not in val and "," not in val:
-        try:
-            return int(val)
-        except ValueError:
-            pass
+    # В Python int("1_000") и float("1_0.5") валидны, но в YAML с '_' — это строка
+    if "_" not in val:
+        # Целое число (без точки и запятой)
+        if "." not in val and "," not in val:
+            try:
+                return int(val)
+            except ValueError:
+                pass
 
-    normalized = val.replace(",", ".")
-    if "." in normalized and lower_val not in ("inf", "-inf", "+inf", "nan"):
-        try:
-            return float(normalized)
-        except ValueError:
-            pass
+        # Дробное число — строго с точкой (значения с запятой вроде "3,5" остаются строками)
+        if "." in val and "," not in val and lower_val not in ("inf", "-inf", "+inf", "nan"):
+            try:
+                return float(val)
+            except ValueError:
+                pass
 
     return val
 
